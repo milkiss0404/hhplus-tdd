@@ -20,4 +20,18 @@ public class PointChecking {
         long sum = pointHistories.stream().mapToLong(PointHistory::amount).sum();
         return userPointTable.insertOrUpdate(userId, sum);
     }
+
+    public void checkBalance(Long id, Long point, TransactionType type) throws Exception {
+        List<PointHistory> pointHistories = pointHistoryTable.selectAllByUserId(id);
+        long sum = pointHistories.stream().mapToLong(PointHistory::amount).sum();
+        if (type == TransactionType.CHARGE) {
+            if (point > MAX_POINT) {
+                throw new Exception("충전 금액은 1,000,000 을 넘을수 없습니다");
+            }
+        } else if (type == TransactionType.USE) {
+            if (sum < point) {
+                throw new Exception("잔액보다 사용금액이 더많습니다");
+            }
+        }
+    }
 }
