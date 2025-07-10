@@ -81,5 +81,42 @@ class PointCheckingTest {
                 .isInstanceOf(Exception.class)
                 .hasMessage("충전 금액은 1,000,000 을 넘을수 없습니다");
     }
+    @Test
+    @DisplayName("포인트 사용시 포인트 체크")
+    void checkBalance2() throws Exception {
+        //given
+        long currentTime = System.currentTimeMillis();
 
+        UserPoint mockUser = new UserPoint(1L, 500_000L, currentTime);
+        Mockito.when(userPointTable.insertOrUpdate(1L, 500_000L)).thenReturn(mockUser);
+
+        UserPoint userPoint = userPointTable.insertOrUpdate(1L, 500_000L);
+        Mockito.verify(userPointTable).insertOrUpdate(1L, 500_000L);
+
+        PointHistory mockHistory = new PointHistory(1L, userPoint.id(), userPoint.point(), TransactionType.CHARGE, currentTime);
+        Mockito.when(pointHistoryTable.insert(userPoint.id(), userPoint.point(), TransactionType.CHARGE, currentTime))
+                .thenReturn(mockHistory);
+
+        PointHistory mockHistory2 = new PointHistory(1L, userPoint.id(), userPoint.point(), TransactionType.CHARGE, currentTime);
+        Mockito.when(pointHistoryTable.insert(userPoint.id(), userPoint.point(), TransactionType.CHARGE, currentTime))
+                .thenReturn(mockHistory2);
+
+        PointHistory insert1 = pointHistoryTable.insert(userPoint.id(), userPoint.point(), TransactionType.CHARGE, currentTime);
+        PointHistory insert2 = pointHistoryTable.insert(userPoint.id(), userPoint.point(), TransactionType.CHARGE, currentTime);
+        Mockito.verify(pointHistoryTable, Mockito.times(2)).insert(userPoint.id(), userPoint.point(), TransactionType.CHARGE, currentTime);
+
+        List<PointHistory> expectedHistory = List.of(insert1, insert2);
+        Mockito.when(pointHistoryTable.selectAllByUserId(userPoint.id())).thenReturn(expectedHistory);
+
+        List<PointHistory> pointHistories = pointHistoryTable.selectAllByUserId(userPoint.id());
+        Mockito.verify(pointHistoryTable).selectAllByUserId(userPoint.id());
+
+        //when
+        long usingPoint = 2_000_000L;
+
+        Assertions.assertThatThrownBy(() ->{
+                    pointChecking.checkBalance(userPoint.id(), usingPoint,TransactionType.USE);
+                }).isInstanceOf(Exception.class)
+                .hasMessage("잔액보다 사용금액이 더많습니다");
+    }
 }
