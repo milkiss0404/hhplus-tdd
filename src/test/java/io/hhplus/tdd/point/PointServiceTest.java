@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -57,5 +58,36 @@ class PointServiceTest {
         verify(pointHistoryTable).selectAllByUserId(mockUser.id());
 
         Assertions.assertThat(chargeUser.point()).isEqualTo(mockUser.point());
+    }
+
+
+    @Test
+    @DisplayName("포인트 사용시 히스토리 합계 후 유저 포인트 에 입력 테스트")
+    void usingPoint() throws Exception {
+        // given
+        long userId = 1L;
+        long chargeAmount = 1000L;
+        long useAmount = -1000L;
+        long currentTime = System.currentTimeMillis();
+
+        PointHistory chargeHistory = new PointHistory(1L, userId, chargeAmount, TransactionType.CHARGE, currentTime);
+        PointHistory useHistory = new PointHistory(2L, userId, useAmount, TransactionType.USE, currentTime);
+
+        List<PointHistory> pointHistories = List.of(chargeHistory, useHistory);
+        when(pointHistoryTable.selectAllByUserId(userId)).thenReturn(pointHistories);
+
+        when(pointHistoryTable.insert(eq(userId), eq(useAmount), eq(TransactionType.USE), anyLong()))
+                .thenReturn(useHistory);
+
+        when(userPointTable.insertOrUpdate(userId, 0L))
+                .thenReturn(new UserPoint(userId, 0L, currentTime));
+
+        // when
+        UserPoint result = pointService.usingUserPoint(userId, useAmount);
+
+        // then
+        verify(pointHistoryTable).insert(eq(userId), eq(useAmount), eq(TransactionType.USE), anyLong());
+        verify(userPointTable).insertOrUpdate(userId, 0L);
+        assertThat(result.point()).isEqualTo(0L);
     }
 }
