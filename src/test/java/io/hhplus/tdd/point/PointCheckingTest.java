@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,4 +70,16 @@ class PointCheckingTest {
         Assertions.assertThat(getBalance.point()).isEqualTo(2000L);
         Assertions.assertThat(userPoint.id()).isEqualTo(1L);
     }
+    @Test
+    @DisplayName("포인트 충전시 포인트 체크")
+    void checkBalance() throws Exception {
+        // given
+        Mockito.when(pointHistoryTable.selectAllByUserId(1L)).thenReturn(Collections.emptyList());
+
+        // when & then
+        Assertions.assertThatThrownBy(() -> pointChecking.checkBalance(1L, 1_000_001L,TransactionType.CHARGE))
+                .isInstanceOf(Exception.class)
+                .hasMessage("충전 금액은 1,000,000 을 넘을수 없습니다");
+    }
+
 }
