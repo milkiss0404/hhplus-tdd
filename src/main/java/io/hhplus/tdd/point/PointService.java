@@ -22,6 +22,15 @@ public class PointService {
         return sumAndInsertPoint(id);
     }
 
+    public UserPoint usingUserPoint(Long id,Long amount) throws Exception {
+        pointChecking.checkBalance(id,amount,TransactionType.USE);
+
+        pointHistoryTable.insert(id,amount,TransactionType.USE,System.currentTimeMillis());
+
+        return sumAndInsertPoint(id);
+    }
+
+
     private UserPoint sumAndInsertPoint(Long id) {
         List<PointHistory> pointHistories = pointHistoryTable.selectAllByUserId(id);
         long sum = pointHistories.stream().mapToLong(PointHistory::amount).sum();
