@@ -13,6 +13,22 @@
 동시성 테스트 코드 : d93ji3
 -->
 
+- 초기설정 커밋: [6f77297a4eef3c8bc912c26db4b2f084cccdd0fe]
+- PR template 추가 : [3d4769efbb3a78e9e461ec635da15b42f4ad7692]
+- UserPointTable 단위테스트 : [a4b1bcd6b62ef0e9b30c436aeb6dcc24c33e5a5d]
+- PointHistoryTable 단위 테스트 : [24f3feebc23aa947194447ca3e747e8e8b3e269f]
+- 포인트 잔액 조회 테스트 RED : [eba833f92f4354b6c67fb0034e9ac2a1d32a9693]
+- 포인트 잔액 조회 구현 & GREEN : [88a9c0ea5b45ae47aa5b4a3ab23ea0e2c07a3489]
+- 포인트 충전시 포인트 체크 테스트 RED : [17193cb536f01e96935233074b89da7e2d622278]
+- 포인트 충전시 포인트 체크 구현 & GREEN : [ee46697b767b074f3cbbf5b03c5827183779ab3e]
+- 포인트 사용시 포인트 체크 테스트 : [157fe2775dfa05a55dcccdcc9652cade311ebb7e]
+- 포인트 충전시 히스토리 합계 계산후 유저 포인트에 입력 테스트 RED : [099c6d4472f9002798e9a11f16ebd3702bd37059]
+- 포인트 충전시 히스토리 합계 계산후 유저 포인트에 입력 구현 : [3a14f5181a8ec0e2a17931ac14e1ffdd5c4faa54]
+- 포인트 사용시 히스토리 합계 후 유저 포인트 에 입력 테스트 RED : [6729d6542b4ba3fab654364c5077c76ce20998dd]
+- 포인트 사용시 히스토리 합계 후 유저 포인트 에 입력 구현 &GREEN : [5d85f7f7742dd6ace8d68bf7870620acdd098c4a]
+- pointController 구현 : [6ef8a15b27f4dead07c0a442feb2112c242e2d64]
+
+
 ---
 ### **리뷰 포인트(질문)**
 - 리뷰 포인트 1
